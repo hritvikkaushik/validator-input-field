@@ -28,7 +28,17 @@ const APIvalidation = async () => {
 };
 
 const ValidatorInputField = (props: ValidatorInputFieldProps & InputProps) => {
-  let validate; //: (value: string)=>string;
+  const validate = (text: string) => {
+    let error: any;
+    switch (props.inbuiltType) {
+      case "Aadhaar":
+        error = AadhaarValidator(text);
+        break;
+      default:
+        error = internalValidator(text);
+    }
+    return error;
+  };
 
   const internalValidator = async (value: string) => {
     console.log(1);
@@ -47,8 +57,8 @@ const ValidatorInputField = (props: ValidatorInputFieldProps & InputProps) => {
 
   const [field, meta, helpers] = useField({
     name: props.name,
-    validate:
-      props.inbuiltType === undefined ? internalValidator : AadhaarValidator,
+    validate,
+    // props.inbuiltType === undefined ? internalValidator : AadhaarValidator,
   });
 
   return (
