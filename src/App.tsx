@@ -1,25 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Button, ChakraProvider } from "@chakra-ui/react";
+import { Form, Formik } from "formik";
+import React from "react";
+import "./App.css";
+import ValidatorInputField from "./components/ValidatorInputField";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <ChakraProvider>
+      <div className="App" style={{ width: "400px" }}>
+        <Formik
+          initialValues={{ formfield: "" }}
+          onSubmit={(values, { setSubmitting }) => {
+            setTimeout(() => {
+              alert(JSON.stringify(values, null, 2));
+
+              setSubmitting(false);
+            }, 400);
+          }}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
+          <Form>
+            <ValidatorInputField name="formfield" type="number" />
+            <Button type="submit">Submit</Button>
+          </Form>
+        </Formik>
+      </div>
+    </ChakraProvider>
   );
 }
 
