@@ -1,10 +1,13 @@
 import { Input, InputProps } from "@chakra-ui/react";
 import { useField } from "formik";
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import axios from "axios";
+import { AadhaarValidator } from "./inbuiltValidations";
 
 interface ValidatorInputFieldProps {
   name: string;
+  validationURL?: string;
+  inbuiltType?: "Aadhaar";
 }
 
 const checkCharacterSet = (text: string) => {
@@ -17,35 +20,44 @@ const APIvalidation = async () => {
   return axios
     .get("https://771bc051-2dd5-4eea-8a4c-4600410edd25.mock.pstmn.io/get") //mock api that returns data.args.validate: true
     .then((res) => {
+      console.log(res.data.args.validate);
       if (!res.data.args.validate) {
-        console.log(res.data.args.validate);
         return "failed server validation";
       } else return "";
     });
 };
 
 const ValidatorInputField = (props: ValidatorInputFieldProps & InputProps) => {
-  const validate = (value: string) => {
+  let validate; //: (value: string)=>string;
+
+  const internalValidator = async (value: string) => {
+    console.log(1);
+
+    let syncChecksComplete = true;
     if (!value) {
+      syncChecksComplete = false;
       return "required";
     }
     if (!checkCharacterSet(value)) {
+      syncChecksComplete = false;
       return "NaN";
     }
-    return APIvalidation();
+    if (syncChecksComplete) return APIvalidation();
   };
 
   const [field, meta, helpers] = useField({
     name: props.name,
-    validate: validate,
+    validate:
+      props.inbuiltType === undefined ? internalValidator : AadhaarValidator,
   });
 
   return (
     <Fragment>
       <Input
-        bgColor="blackAlpha.300"
+        bgColor="gray.300"
         isInvalid={meta.error ? true : false}
         {...field}
+        marginBottom="10px"
       />
       {meta.touched && meta.error && <div className="error">{meta.error}</div>}
     </Fragment>

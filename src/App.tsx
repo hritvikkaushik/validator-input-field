@@ -19,7 +19,7 @@ function App() {
           }}
         >
           <Form>
-            <ValidatorInputField name="formfield" type="number" />
+            <ValidatorInputField name="formfield" inbuiltType="Aadhaar" />
             <Button type="submit">Submit</Button>
           </Form>
         </Formik>
