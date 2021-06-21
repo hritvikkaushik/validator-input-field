@@ -21,3 +21,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+src/components/CustomInputFields.tsx
+src/components/FormTextInput.tsx
+.env
