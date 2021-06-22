@@ -55,6 +55,12 @@ const ValidatorInputField = (props: ValidatorInputFieldProps & InputProps) => {
     if (syncChecksComplete) return APIvalidation();
   };
 
+  const keyPressHandler = (e: React.KeyboardEvent) => {
+    console.log(e.key);
+    if (/[0-9\s]/.test(e.key)) return e;
+    e.preventDefault();
+  };
+
   const [field, meta, helpers] = useField({
     name: props.name,
     validate,
@@ -67,6 +73,7 @@ const ValidatorInputField = (props: ValidatorInputFieldProps & InputProps) => {
         bgColor="gray.300"
         isInvalid={meta.error ? true : false}
         {...field}
+        onKeyPress={keyPressHandler}
         marginBottom="10px"
       />
       {meta.touched && meta.error && <div className="error">{meta.error}</div>}
