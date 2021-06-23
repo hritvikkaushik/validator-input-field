@@ -12,6 +12,7 @@ export const PANValidator = (value: string) => {
   if (!panRegx.test(value)) {
     return "Please enter a valid PAN.";
   }
+  return "";
 };
 
 export const EmailValidator = (value: string) => {
@@ -19,6 +20,7 @@ export const EmailValidator = (value: string) => {
   if(!emailRegx.test(value)){
     return "Please enter a valid email address.";
   }
+  return "";
 };
 
 export const MobileValidator = (value: string) => {
@@ -26,4 +28,5 @@ export const MobileValidator = (value: string) => {
   if(!emailRegx.test(value)){
     return "Please enter a valid mobile number.";
   }
+  return "";
 };
