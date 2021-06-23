@@ -1,46 +1,54 @@
-# Getting Started with Create React App
+# validator-input-field
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React form input component based on Chakra-UI and Formik that performs various types of validations as required, and has various inbuilt validations as required by the organization.
+  
+## Requirements
+- Should be extensible
+- Should allow for custom validations to be added
+- Should handle async validation from a server
+- Should have inbuilt types for validations such as
+  - Aadhar
+  - PAN
+  - Mobile Number
+  - PIN Code
+  - Names
+  - ...
 
-## Available Scripts
+## Current Progress
+So far I've been able to
+- take a character-set as a prop and validate according to that
+- prevent user from typing illegal characters
+- prevent user from typing beyond the maximum length
+- take an inbuilt type as a prop (e.g., 'aadhaar')
+  - if inbuilt type is specified, then the appropriator validator for that type is called using switch-case
+  - otherwise custom validations are performed, as specified by the props.
+- perform async validation from a server
+  
+Besides, Formik functionality such as schema-based validation is working.
 
-In the project directory, you can run:
+## API at present
+    interface validationConfig {
+      allowAlpha?: boolean; //Allow a-zA-Z
+      allowNum?: boolean; //Allow 0-9
+      regex?: RegExp; //Regex to check input with
+      illegalCharacters?: string;
+      maxValue?: number;
+      minValue?: number;
+      maxLength?: number;
+      minLength?: number;
+      length?: number;
+      allowBeyondMaxLength?: boolean; //if false, no input accepted once max length reached
+      allowIllegalInputs?: boolean; //if true, no other input except the allowed characters accepted
+      asyncValidation?: {
+        url: string; //url to hit for async validation
+        options?: object;
+      };
+      inbuiltType?: "Aadhaar" | "PAN";
+      required?: boolean;
+    }
 
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+## TODO
+- Make a cleaner API to reduce/optimize code.
+- Add more inbuilt types. Currently, only 'Aadhaar' is there.
+- Change from Chakra Input component to a Chakra FormControl, and implement additional Chakra Components like FormErrorMessage, FormLabel, FormHelperText, etc.
+- ???
