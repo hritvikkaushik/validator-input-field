@@ -31,7 +31,8 @@ function App() {
             <ValidatorInputField
               name="formfield"
               validationConfig={{
-                regex: /freecharge/,
+                // regex: /freecharge/,
+                required: true,
                 allowAlpha: true,
                 allowNum: false,
                 illegalCharacters: "!@#$%^&*()",

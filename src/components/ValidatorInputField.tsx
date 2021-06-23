@@ -27,6 +27,7 @@ interface validationConfig {
     options?: object;
   };
   inbuiltType?: "Aadhaar" | "PAN";
+  required?: boolean;
 }
 
 interface ValidatorInputFieldProps {
@@ -65,6 +66,8 @@ const validate = (text: string, config: validationConfig) => {
 
 const check = (text: string, k: keyof validationConfig, val: any) => {
   switch (k) {
+    case "required":
+      return text.length === 0 ? "Required" : "";
     case "regex":
       return regexChecker(text, val);
     case "maxLength":
@@ -133,7 +136,23 @@ const ValidatorInputField = (props: ValidatorInputFieldProps & InputProps) => {
   return (
     <Fragment>
       <Input
-        bgColor="gray.300"
+        bgColor="#F9FCFF"
+        _invalid={{
+          borderBottomColor: "#800020",
+        }}
+        _focus={{
+          outline: "none",
+        }}
+        border="1px"
+        borderColor="#D1E8FF"
+        borderRadius={0}
+        borderTopRadius="base"
+        fontSize="1rem"
+        fontWeight="bold"
+        display="inline-block"
+        width="100%"
+        appearance="none"
+        outline="none"
         isInvalid={meta.error ? true : false}
         {...field}
         onKeyPress={keyPressHandler}
