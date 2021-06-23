@@ -143,7 +143,7 @@ const ValidatorInputField = (props: ValidatorInputFieldProps & InputProps) => {
           _focus={{
             outline: "none",
           }}
-          placeholder=" "
+          placeholder={props.label}
           border="1px"
           borderColor="#D1E8FF"
           borderRadius={0}
@@ -154,11 +154,14 @@ const ValidatorInputField = (props: ValidatorInputFieldProps & InputProps) => {
           width="100%"
           appearance="none"
           outline="none"
+          px={3}
+          pt={4}
+          pb={2}
           {...field}
           onKeyPress={keyPressHandler}
           marginBottom="10px"
         />
-        <FormLabel
+        {/* <FormLabel
           pointerEvents="none"
           htmlFor={props.name}
           pos="absolute"
@@ -170,7 +173,7 @@ const ValidatorInputField = (props: ValidatorInputFieldProps & InputProps) => {
           color="#696B6F"
         >
           {props.label}
-        </FormLabel>
+        </FormLabel> */}
         <FormErrorMessage pl={3}>{meta.error}</FormErrorMessage>
       </FormControl>
     </Fragment>
