@@ -1,5 +1,29 @@
 export const AadhaarValidator = (text: string) => {
   const pattern = new RegExp(/^[1-9]{1}[0-9]{3}\s[0-9]{4}\s[0-9]{4}$/);
-  if (!pattern.test(text)) return "Entered text is not a valid aadhaar number.";
+  if (!pattern.test(text)) return "Please enter a valid Aadhar Number.";
   return "";
+};
+
+export const PANValidator = (value: string) => {
+  if (value.length > 10) {
+    return "PAN should be 10 character long";
+  }
+  let panRegx = /^[A-Za-z]{5}[0-9]{4}[A-Za-z]{1}$/;
+  if (!panRegx.test(value)) {
+    return "Please enter a valid PAN.";
+  }
+};
+
+export const EmailValidator = (value: string) => {
+  let emailRegx = /^[A-Z0-9._%+-]+@[A-Z0-9.-]{3,}\.[A-Za-z]{2,4}$/i;
+  if(!emailRegx.test(value)){
+    return "Please enter a valid email address.";
+  }
+};
+
+export const MobileValidator = (value: string) => {
+  let emailRegx = /^[1-9]{1}\d{9}$/;
+  if(!emailRegx.test(value)){
+    return "Please enter a valid mobile number.";
+  }
 };
