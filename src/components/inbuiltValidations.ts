@@ -17,7 +17,7 @@ export const PANValidator = (value: string) => {
 
 export const EmailValidator = (value: string) => {
   let emailRegx = /^[A-Z0-9._%+-]+@[A-Z0-9.-]{3,}\.[A-Za-z]{2,4}$/i;
-  if(!emailRegx.test(value)){
+  if (!emailRegx.test(value)) {
     return "Please enter a valid email address.";
   }
   return "";
@@ -25,7 +25,7 @@ export const EmailValidator = (value: string) => {
 
 export const MobileValidator = (value: string) => {
   let emailRegx = /^[1-9]{1}\d{9}$/;
-  if(!emailRegx.test(value)){
+  if (!emailRegx.test(value)) {
     return "Please enter a valid mobile number.";
   }
   return "";

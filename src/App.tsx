@@ -17,7 +17,7 @@ function App() {
     <ChakraProvider>
       <div className="App" style={{ width: "400px" }}>
         <Formik
-          initialValues={{ formfield: "" }}
+          initialValues={{ generalField: "", aadhaarField: "" }}
           onSubmit={(values, { setSubmitting }) => {
             setTimeout(() => {
               alert(JSON.stringify(values, null, 2));
@@ -29,22 +29,30 @@ function App() {
         >
           <Form>
             <ValidatorInputField
-              name="formfield"
+              name="aadhaarField"
               label="Enter text"
-              validationConfig={{
-                // regex: /freecharge/,
-                required: true,
-                allowAlpha: true,
-                allowNum: false,
-                illegalCharacters: "!@#$%^&*()",
-                maxLength: 10,
-                minLength: 6,
-                allowBeyondMaxLength: false,
-                allowIllegalInputs: false,
-                asyncValidation: {
-                  url: "https://771bc051-2dd5-4eea-8a4c-4600410edd25.mock.pstmn.io/get",
-                },
+              // regex: /freecharge/,
+              isRequired
+              inbuiltType="Aadhaar"
+              allowAlpha={false}
+              allowIllegalInputs={false}
+            />
+            <ValidatorInputField
+              name="generalField"
+              label="Enter text"
+              // regex: /freecharge/,
+              isRequired
+              allowAlpha={false}
+              allowNum={true}
+              illegalCharacters="!@#$%^&*()"
+              allowBeyondMaxLength={true}
+              allowIllegalInputs={false}
+              asyncValidation={{
+                url: "https://771bc051-2dd5-4eea-8a4c-4600410edd25.mock.pstmn.io/get",
               }}
+              type="number"
+              maxLength={10}
+              minLength={8}
             />
             <Button type="submit">Submit</Button>
           </Form>

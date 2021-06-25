@@ -5,33 +5,40 @@ export const regexChecker = (input: string, regex: RegExp) => {
 
 export const rangeChecker = (
   input: number | string,
-  min?: number,
-  max?: number
+  range: {
+    min?: number | null;
+    max?: number | null;
+  }
 ) => {
   if (typeof input === typeof 1) {
-    if (max && input > max) return "Too large";
-    if (min && input < min) return "Too small";
+    if (range.max && input > range.max)
+      return `Value must be smaller than ${range.max}.`;
+    if (range.min && input < range.min)
+      return `Value must be larger than ${range.min}.`;
   } else {
     const value = parseInt(input as string);
-    if (max && value > max) return "Too large";
-    if (min && value < min) return "Too small";
+    if (range.max && value > range.max)
+      return `Value must be smaller than ${range.max}.`;
+    if (range.min && value < range.min)
+      return `Value must be larger than ${range.min}.`;
   }
   return "";
 };
 
 export const lengthChecker = (
-  input: number | string,
-  min?: number,
-  max?: number
-) => {
-  if (typeof input === typeof "") {
-    if (max && (input as string).length > max) return "Too long";
-    if (min && (input as string).length < min) return "Too short";
-  } else {
-    const strVal = `${input}`;
-    if (max && strVal.length > max) return "Too long";
-    if (min && strVal.length < min) return "Too short";
+  input: string,
+  length: {
+    min: number | null;
+    max: number | null;
+    exact: number | null;
   }
+) => {
+  if (length.exact && input.length !== length.exact)
+    return `Input must be ${length.exact} characters long.`;
+  if (length.max && input.length > length.max)
+    return `Input must be shorter than ${length.max} characters.`;
+  if (length.min && input.length < length.min)
+    return `Input must be longer than ${length.min} characters.`;
   return "";
 };
 

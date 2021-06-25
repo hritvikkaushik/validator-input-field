@@ -1,13 +1,13 @@
 import {
   FormControl,
   FormErrorMessage,
-  FormHelperText,
-  FormLabel,
+  // FormHelperText,
+  // FormLabel,
   Input,
   InputProps,
 } from "@chakra-ui/react";
 import { useField } from "formik";
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import axios from "axios";
 import { AadhaarValidator } from "./inbuiltValidations";
 import {
@@ -17,30 +17,55 @@ import {
   regexChecker,
 } from "./checkers";
 
-interface validationConfig {
+// interface validationConfig {
+//   maxValue?: number;
+//   minValue?: number;
+//   maxLength?: number;
+//   minLength?: number;
+//   required?: boolean;
+// }
+
+interface ValidatorInputFieldProps {
+  name: string;
+  label: string;
+  // validationConfig?: validationConfig;
+  inbuiltType?: "Aadhaar" | "PAN";
+  length?: number;
   allowAlpha?: boolean; //Allow a-zA-Z
   allowNum?: boolean; //Allow 0-9
   regex?: RegExp; //Regex to check input with
   illegalCharacters?: string;
-  maxValue?: number;
-  minValue?: number;
-  maxLength?: number;
-  minLength?: number;
-  length?: number;
   allowBeyondMaxLength?: boolean; //if false, no input accepted once max length reached
   allowIllegalInputs?: boolean; //if true, no other input except the allowed characters accepted
   asyncValidation?: {
     url: string; //url to hit for async validation
     options?: object;
   };
-  inbuiltType?: "Aadhaar" | "PAN";
-  required?: boolean;
 }
 
-interface ValidatorInputFieldProps {
-  name: string;
-  label: string;
-  validationConfig?: validationConfig;
+interface internalConfig {
+  type: null | string | number;
+  inbuiltType: "Aadhaar" | "PAN" | "PhoneNum" | null;
+  required: null | boolean;
+  illegals: string;
+  length: {
+    max: null | number;
+    min: null | number;
+    exact: null | number;
+  };
+  number: {
+    max: null | number;
+    min: null | number;
+  };
+  allow: {
+    beyondLength: boolean | null;
+    illegals: boolean | null;
+  };
+  customRegex: RegExp | null;
+  asyncVal: {
+    url: string | null;
+    params: any;
+  };
 }
 
 const APIvalidation = async (url: string, options?: any) => {
@@ -56,79 +81,210 @@ const APIvalidation = async (url: string, options?: any) => {
     });
 };
 
-const validate = (text: string, config: validationConfig) => {
-  switch (config?.inbuiltType) {
-    case "Aadhaar":
-      return AadhaarValidator(text);
-
-    default:
-      return defaultValidator(text, config as validationConfig);
-  }
-};
-
-const check = (text: string, k: keyof validationConfig, val: any) => {
+const check = (
+  input: string,
+  k: keyof internalConfig,
+  config: internalConfig
+) => {
   switch (k) {
     case "required":
-      return text.length === 0 ? "Required" : "";
-    case "regex":
-      return regexChecker(text, val);
-    case "maxLength":
-      return lengthChecker(text, undefined, val);
-    case "minLength":
-      return lengthChecker(text, val, undefined);
-    case "maxValue":
-      return rangeChecker(text, undefined, val);
-    case "minValue":
-      return rangeChecker(text, val, undefined);
+      return config.required === true && input.length === 0
+        ? "Required field"
+        : "";
+    case "length":
+      return lengthChecker(input, config.length);
+    case "number":
+      if (config.type === "number") {
+        return rangeChecker(input, config.number);
+      }
+      return "";
+    case "customRegex":
+      return regexChecker(input, config.customRegex as RegExp);
   }
 };
 
-const defaultValidator = async (text: string, config: validationConfig) => {
+const defaultValidator = async (text: string, config: internalConfig) => {
   let syncChecksComplete = true;
-  let k: keyof validationConfig;
+  let k: keyof internalConfig;
   for (k in config) {
     if (config[k]) {
-      let error = check(text, k, config[k]);
+      let error = check(text, k, config);
       if (error) {
         syncChecksComplete = false;
         return error;
       }
     }
   }
-
-  if (syncChecksComplete && config.asyncValidation?.url)
-    return APIvalidation(config.asyncValidation.url);
+  if (syncChecksComplete && config.asyncVal?.url)
+    return APIvalidation(config.asyncVal.url);
+  return "";
 };
 
-const ValidatorInputField = (props: ValidatorInputFieldProps & InputProps) => {
+const ValidatorInputField: React.FC<ValidatorInputFieldProps & InputProps> = (
+  props
+) => {
+  const [config, setConfig] = useState<internalConfig>({
+    type: null,
+    inbuiltType: null,
+    required: null,
+    illegals: "",
+    length: {
+      max: null,
+      min: null,
+      exact: null,
+    },
+    number: {
+      max: null,
+      min: null,
+    },
+    allow: {
+      beyondLength: null,
+      illegals: null,
+    },
+    customRegex: null,
+    asyncVal: {
+      url: null,
+      params: {},
+    },
+  });
+
+  const {
+    name,
+    label,
+    inbuiltType,
+    max,
+    min,
+    maxLength,
+    minLength,
+    type,
+    allowAlpha,
+    allowBeyondMaxLength,
+    allowIllegalInputs,
+    allowNum,
+    ...rest
+  } = props;
+
+  useEffect(() => {
+    const newConfig: internalConfig = { ...config };
+    let k: keyof typeof props;
+    for (k in props) {
+      if (props[k] !== undefined) {
+        // console.log(props[k]);
+        switch (k) {
+          case "isRequired":
+            newConfig.required = true;
+            break;
+          case "minLength":
+            newConfig.length.min = props.minLength as number;
+            break;
+          case "maxLength":
+            newConfig.length.max = props.maxLength as number;
+            break;
+          case "inbuiltType":
+            newConfig.inbuiltType =
+              props.inbuiltType as typeof config.inbuiltType;
+            break;
+          case "type":
+            switch (props.type) {
+              case "number":
+                newConfig.type = "number";
+                if (!newConfig.illegals.includes("a-z"))
+                  newConfig.illegals = `${newConfig.illegals}a-zA-Z`;
+                break;
+              default:
+                if (
+                  props.allowAlpha === false &&
+                  !newConfig.illegals.includes("a-z")
+                )
+                  newConfig.illegals = `${newConfig.illegals}a-zA-Z`;
+                if (
+                  props.allowNum === false &&
+                  !newConfig.illegals.includes("0-9")
+                )
+                  newConfig.illegals = `${newConfig.illegals}0-9`;
+            }
+            break;
+          case "allowIllegalInputs":
+            if (
+              props.allowAlpha === false &&
+              !newConfig.illegals.includes("a-z")
+            )
+              newConfig.illegals = `${newConfig.illegals}a-zA-Z`;
+            if (props.allowNum === false && !newConfig.illegals.includes("0-9"))
+              newConfig.illegals = `${newConfig.illegals}0-9`;
+            if (
+              props.illegalCharacters &&
+              !newConfig.illegals.includes(props.illegalCharacters)
+            )
+              newConfig.illegals = `${newConfig.illegals}${props.illegalCharacters}`;
+            if (allowIllegalInputs === false) {
+              newConfig.allow.illegals = false;
+            } else {
+              newConfig.allow.illegals = true;
+            }
+            break;
+          case "allowBeyondMaxLength":
+            newConfig.allow.beyondLength = props.allowBeyondMaxLength
+              ? true
+              : false;
+            break;
+          case "asyncValidation":
+            newConfig.asyncVal = {
+              url: props.asyncValidation?.url as string,
+              params: props.asyncValidation?.options,
+            };
+            break;
+        }
+      }
+    }
+    console.log(1, newConfig);
+    setConfig(newConfig);
+  }, []);
+
+  const validate = async (text: string) => {
+    switch (config.inbuiltType) {
+      case "Aadhaar":
+        setConfig({
+          ...config,
+          length: {
+            ...config.length,
+            exact: 14,
+          },
+        });
+        let error = await defaultValidator(text, config as internalConfig);
+        if (error !== "") return error;
+        return AadhaarValidator(text);
+
+      default:
+        return defaultValidator(text, config as internalConfig);
+    }
+  };
+
   const [field, meta, helpers] = useField({
     name: props.name,
-    validate: (text) =>
-      validate(text, props.validationConfig as validationConfig),
+    validate,
     // props.inbuiltType === undefined ? internalValidator : AadhaarValidator,
   });
 
   const keyPressHandler = (e: React.KeyboardEvent) => {
-    if (props.validationConfig?.allowBeyondMaxLength === false) {
+    // console.log(config.allow);
+
+    if (config.allow.beyondLength === false) {
       if (
-        field.value.length === props.validationConfig.length ||
-        field.value.length === props.validationConfig.maxLength
+        field.value.length === config.length.max ||
+        field.value.length === config.length.exact
       )
-        e.preventDefault();
+        console.log(config.length);
+
+      e.preventDefault();
     }
 
-    if (props.validationConfig?.allowIllegalInputs === false) {
-      if (
-        props.validationConfig.allowAlpha === false &&
-        e.key.match(/[a-zA-Z]/)
-      ) {
-        e.preventDefault();
-        console.log(12);
-      }
-      if (props.validationConfig.allowNum === false && e.key.match(/[0-9]/))
-        e.preventDefault();
-      if (props.validationConfig.illegalCharacters?.includes(e.key))
-        e.preventDefault();
+    if (config.allow.illegals === false) {
+      const pattern = new RegExp(`[${config.illegals}]`);
+      // console.log(config.illegals);
+      // console.log(pattern);
+
+      if (e.key.match(pattern)) e.preventDefault();
     }
   };
 
@@ -160,6 +316,7 @@ const ValidatorInputField = (props: ValidatorInputFieldProps & InputProps) => {
           {...field}
           onKeyPress={keyPressHandler}
           marginBottom="10px"
+          {...rest}
         />
         {/* <FormLabel
           pointerEvents="none"
