@@ -30,6 +30,7 @@ function App() {
           <Form>
             <ValidatorInputField
               name="formfield"
+              label="Enter text"
               validationConfig={{
                 // regex: /freecharge/,
                 required: true,
