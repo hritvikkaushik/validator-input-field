@@ -46,9 +46,15 @@ Besides, Formik functionality such as schema-based validation is working.
       inbuiltType?: "Aadhaar" | "PAN";
       required?: boolean;
     }
+    
+    interface ValidatorInputFieldProps {
+      name: string;
+      validationConfig?: validationConfig;
+    }
 
 ## TODO
 - Make a cleaner API to reduce/optimize code.
 - Add more inbuilt types. Currently, only 'Aadhaar' is there.
 - Change from Chakra Input component to a Chakra FormControl, and implement additional Chakra Components like FormErrorMessage, FormLabel, FormHelperText, etc.
+- Finalize the async validation API to send query and parameters with the HTTP request (currently we have only been sending a GET request to a mock API that returns true or false without sending any query, for development purposes.)
 - ???
