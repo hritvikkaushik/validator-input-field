@@ -92,6 +92,9 @@ export const getConfigFromProps = (
             ? true
             : false;
           break;
+        case "regex":
+          newConfig.customRegex = props.regex as RegExp;
+          break;
         case "asyncValidation":
           newConfig.asyncVal = {
             url: props.asyncValidation?.url as string,

@@ -40,17 +40,18 @@ function App() {
             <ValidatorInputField
               name="generalField"
               label="Enter text"
-              // regex: /freecharge/,
+              regex={/\.com$/}
               isRequired
-              allowAlpha={false}
+              allowAlpha={true}
               allowNum={true}
               illegalCharacters="!@#$%^&*()"
               allowBeyondMaxLength={true}
               allowIllegalInputs={false}
               asyncValidation={{
-                url: "https://771bc051-2dd5-4eea-8a4c-4600410edd25.mock.pstmn.io/get",
+                url: "https://771bc051-2dd5-4eea-8a4c-4600410edd25.mock.pstmn.io/get", //returns true
+                // url: "https://run.mocky.io/v3/63d3164f-c68a-465c-9ece-cbacf0cebb7e", // returns false
               }}
-              type="number"
+              // type="number"
               maxLength={10}
               minLength={8}
             />
