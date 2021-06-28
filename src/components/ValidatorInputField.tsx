@@ -1,4 +1,11 @@
-import { Input, InputProps } from "@chakra-ui/react";
+import {
+  FormControl,
+  FormErrorMessage,
+  FormHelperText,
+  FormLabel,
+  Input,
+  InputProps,
+} from "@chakra-ui/react";
 import { useField } from "formik";
 import React, { Fragment, useEffect } from "react";
 import axios from "axios";
@@ -32,14 +39,9 @@ interface validationConfig {
 
 interface ValidatorInputFieldProps {
   name: string;
+  label: string;
   validationConfig?: validationConfig;
 }
-
-// const checkCharacterSet = (text: string, regex: RegExp) => {
-//   // const chars = new RegExp(/[0-9]{12}/g);
-//   if (!regex.test(text)) return false;
-//   return true;
-// };
 
 const APIvalidation = async (url: string, options?: any) => {
   console.log(url);
@@ -128,37 +130,52 @@ const ValidatorInputField = (props: ValidatorInputFieldProps & InputProps) => {
       if (props.validationConfig.illegalCharacters?.includes(e.key))
         e.preventDefault();
     }
-
-    // if (/[0-9\s]/.test(e.key)) return e;
-    // e.preventDefault();
   };
 
   return (
     <Fragment>
-      <Input
-        bgColor="#F9FCFF"
-        _invalid={{
-          borderBottomColor: "#800020",
-        }}
-        _focus={{
-          outline: "none",
-        }}
-        border="1px"
-        borderColor="#D1E8FF"
-        borderRadius={0}
-        borderTopRadius="base"
-        fontSize="1rem"
-        fontWeight="bold"
-        display="inline-block"
-        width="100%"
-        appearance="none"
-        outline="none"
-        isInvalid={meta.error ? true : false}
-        {...field}
-        onKeyPress={keyPressHandler}
-        marginBottom="10px"
-      />
-      {meta.touched && meta.error && <div className="error">{meta.error}</div>}
+      <FormControl isInvalid={!!(meta.error && meta.touched)}>
+        <Input
+          bgColor="#F9FCFF"
+          _invalid={{
+            borderBottomColor: "#800020",
+          }}
+          _focus={{
+            outline: "none",
+          }}
+          placeholder={props.label}
+          border="1px"
+          borderColor="#D1E8FF"
+          borderRadius={0}
+          borderTopRadius="base"
+          fontSize="1rem"
+          fontWeight="bold"
+          display="inline-block"
+          width="100%"
+          appearance="none"
+          outline="none"
+          px={3}
+          pt={4}
+          pb={2}
+          {...field}
+          onKeyPress={keyPressHandler}
+          marginBottom="10px"
+        />
+        {/* <FormLabel
+          pointerEvents="none"
+          htmlFor={props.name}
+          pos="absolute"
+          top={1}
+          p={3}
+          transformOrigin="0%"
+          transitionDuration="300"
+          fontSize="1rem"
+          color="#696B6F"
+        >
+          {props.label}
+        </FormLabel> */}
+        <FormErrorMessage pl={3}>{meta.error}</FormErrorMessage>
+      </FormControl>
     </Fragment>
   );
 };
