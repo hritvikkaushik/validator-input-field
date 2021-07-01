@@ -18,6 +18,9 @@ export type FormFieldTextInputProps<FormShape> = FormControlProps &
     //-------------------------------------------------------------------//
     inbuiltType?: "Aadhaar" | "PAN";
     asyncVal?: (text: string) => Promise<string>;
+    preventIllegalInputs?: boolean;
+    illegalCharacters?: string;
+    matchRegex?: RegExp;
   };
 
 export function FormFieldTextInput<FormShape>(
@@ -41,11 +44,35 @@ export function FormFieldTextInput<FormShape>(
     }
   };
 
+  const pasteHandler = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    console.log(e.clipboardData.getData("text"));
+    if (!props.preventIllegalInputs) return e;
+    const text = e.clipboardData.getData("text");
+    if (props.matchRegex && !text.match(props.matchRegex)) {
+      console.log(1);
+      e.preventDefault();
+      return e;
+    }
+    function CheckRestricted(src: string, restricted: string) {
+      return src.split("").some((ch) => restricted.indexOf(ch) !== -1);
+    }
+    if (
+      props.illegalCharacters &&
+      CheckRestricted(text, props.illegalCharacters)
+    ) {
+      console.log(2);
+      e.preventDefault();
+      return e;
+    }
+    return e;
+  };
+
   return (
     <Field name={name} validate={validate}>
       {({ field, form }: FieldProps<string, FormShape>) => {
         return (
           <FormTextInput
+            onPaste={pasteHandler}
             {...field}
             {...props}
             touched={(getIn(form.touched, name) as boolean) || isExternalError}
@@ -59,3 +86,5 @@ export function FormFieldTextInput<FormShape>(
     </Field>
   );
 }
+
+export default FormFieldTextInput;

@@ -2,17 +2,9 @@ import { Button, ChakraProvider } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import React from "react";
 import "./App.css";
-import ValidatorInputField from "./components/ValidatorInputField";
-// import * as Yup from "yup";
+import ValidatorInputField from "./components/V2";
 
 function App() {
-  // const schema = Yup.object().shape({
-  //   formfield: Yup.string()
-  //     .min(2, "Too short")
-  //     .max(10, "Too long")
-  //     .required("Required"),
-  // });
-
   return (
     <ChakraProvider>
       <div className="App" style={{ width: "400px" }}>
@@ -25,26 +17,28 @@ function App() {
               setSubmitting(false);
             }, 400);
           }}
-          // validationSchema={schema}
         >
           <Form>
             <ValidatorInputField
               name="formfield"
               label="Enter text"
-              validationConfig={{
-                // regex: /freecharge/,
-                required: true,
-                allowAlpha: true,
-                allowNum: false,
-                illegalCharacters: "!@#$%^&*()",
-                maxLength: 10,
-                minLength: 6,
-                allowBeyondMaxLength: false,
-                allowIllegalInputs: false,
-                asyncValidation: {
-                  url: "https://771bc051-2dd5-4eea-8a4c-4600410edd25.mock.pstmn.io/get",
-                },
-              }}
+              preventIllegalInputs={true}
+              illegalCharacters="1"
+              matchRegex={/a/}
+              // validationConfig={{
+              //   // regex: /freecharge/,
+              //   required: true,
+              //   allowAlpha: true,
+              //   allowNum: false,
+              //   illegalCharacters: "!@#$%^&*()",
+              //   maxLength: 10,
+              //   minLength: 6,
+              //   allowBeyondMaxLength: false,
+              //   allowIllegalInputs: false,
+              //   asyncValidation: {
+              //     url: "https://771bc051-2dd5-4eea-8a4c-4600410edd25.mock.pstmn.io/get",
+              //   },
+              // }}
             />
             <Button type="submit">Submit</Button>
           </Form>
