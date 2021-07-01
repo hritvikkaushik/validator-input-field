@@ -21,6 +21,7 @@ export type FormFieldTextInputProps<FormShape> = FormControlProps &
     preventIllegalInputs?: boolean;
     illegalCharacters?: string;
     matchRegex?: RegExp;
+    preventBeyondLength?: boolean;
   };
 
 export function FormFieldTextInput<FormShape>(
@@ -51,7 +52,6 @@ export function FormFieldTextInput<FormShape>(
     if (props.matchRegex && !text.match(props.matchRegex)) {
       console.log(1);
       e.preventDefault();
-      return e;
     }
     function CheckRestricted(src: string, restricted: string) {
       return src.split("").some((ch) => restricted.indexOf(ch) !== -1);
@@ -62,7 +62,14 @@ export function FormFieldTextInput<FormShape>(
     ) {
       console.log(2);
       e.preventDefault();
-      return e;
+    }
+    // Paste only as many characters as can fit inside the max length
+    if (props.preventBeyondLength === true) {
+      if (props.maxLength) {
+        const remaining =
+          props.maxLength - (e.target as HTMLInputElement).value.length;
+        e.clipboardData.setData("text", text.substring(0, remaining));
+      }
     }
     return e;
   };

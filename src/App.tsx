@@ -22,9 +22,12 @@ function App() {
             <ValidatorInputField
               name="formfield"
               label="Enter text"
-              preventIllegalInputs={true}
-              illegalCharacters="1"
-              matchRegex={/a/}
+              // preventIllegalInputs={true}
+              // illegalCharacters="1"
+              // matchRegex={/a/}
+              maxLength={10}
+              preventBeyondLength={false}
+
               // validationConfig={{
               //   // regex: /freecharge/,
               //   required: true,
