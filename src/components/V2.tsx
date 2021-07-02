@@ -3,6 +3,7 @@ import { FormControlProps, InputProps } from "@chakra-ui/react";
 import { Field, FieldProps, getIn } from "formik";
 import { FormTextInput, MaskedInputProps } from "./FormTextInput";
 import { AadhaarValidator } from "./inbuiltValidations";
+import { lengthChecker, rangeChecker, regexChecker } from "./checkers";
 
 export type FormFieldTextInputProps<FormShape> = FormControlProps &
   InputProps & {
@@ -29,29 +30,58 @@ export function FormFieldTextInput<FormShape>(
   const { name, isExternalError, externalError, inbuiltType } = props;
 
   const defaultValidator = (text: string) => {
-    let syncChecksComplete = true;
-
-    if (syncChecksComplete && props.asyncVal) return props.asyncVal(text);
+    // let syncChecksComplete = true;
+    let k: keyof typeof props;
+    for (k in props) {
+      if (props[k]) {
+        let error = check(text, k, props[k]);
+        if (error) {
+          // syncChecksComplete = false;
+          return error;
+        }
+      }
+    }
+    if (props.asyncVal) return props.asyncVal(text);
+    return "";
   };
 
-  const validate = (text: string) => {
-    switch (inbuiltType) {
-      case "Aadhaar":
-        return AadhaarValidator(text);
-
-      default:
-        return defaultValidator(text);
+  const check = (text: string, k: keyof typeof props, val: any) => {
+    switch (k) {
+      case "isRequired":
+        return text.length === 0 ? "Required" : "";
+      case "matchRegex":
+        return regexChecker(text, val);
+      case "maxLength":
+        return lengthChecker(text, undefined, val);
+      case "minLength":
+        return lengthChecker(text, val, undefined);
+      case "max":
+        return rangeChecker(text, undefined, val);
+      case "min":
+        return rangeChecker(text, val, undefined);
     }
   };
 
+  const validate = async (text: string) => {
+    let error = "";
+    switch (inbuiltType) {
+      case "Aadhaar":
+        error = AadhaarValidator(text);
+        break;
+
+      default:
+        break;
+    }
+    return error || (await defaultValidator(text));
+  };
+
   const pasteHandler = (e: React.ClipboardEvent<HTMLInputElement>) => {
-    console.log(e.clipboardData.getData("text"));
+    console.log(e);
     if (!props.preventIllegalInputs) return e;
     const text = e.clipboardData.getData("text");
     if (props.matchRegex && !text.match(props.matchRegex)) {
       console.log(1);
       e.preventDefault();
-      return e;
     }
     function CheckRestricted(src: string, restricted: string) {
       return src.split("").some((ch) => restricted.indexOf(ch) !== -1);
@@ -62,7 +92,6 @@ export function FormFieldTextInput<FormShape>(
     ) {
       console.log(2);
       e.preventDefault();
-      return e;
     }
     return e;
   };

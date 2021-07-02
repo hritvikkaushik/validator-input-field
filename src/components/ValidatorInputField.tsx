@@ -10,12 +10,7 @@ import { useField } from "formik";
 import React, { Fragment, useEffect } from "react";
 import axios from "axios";
 import { AadhaarValidator } from "./inbuiltValidations";
-import {
-  illegalChecker,
-  lengthChecker,
-  rangeChecker,
-  regexChecker,
-} from "./checkers";
+import { lengthChecker, rangeChecker, regexChecker } from "./checkers";
 
 interface validationConfig {
   allowAlpha?: boolean; //Allow a-zA-Z

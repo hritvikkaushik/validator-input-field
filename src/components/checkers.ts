@@ -9,12 +9,12 @@ export const rangeChecker = (
   max?: number
 ) => {
   if (typeof input === typeof 1) {
-    if (max && input > max) return "Too large";
-    if (min && input < min) return "Too small";
+    if (max && input > max) return `Value must be smaller than ${max}`;
+    if (min && input < min) return `Value must be larger than ${min}`;
   } else {
     const value = parseInt(input as string);
-    if (max && value > max) return "Too large";
-    if (min && value < min) return "Too small";
+    if (max && value > max) return `Value must be smaller than ${max}`;
+    if (min && value < min) return `Value must be larger than ${min}`;
   }
   return "";
 };
@@ -25,17 +25,16 @@ export const lengthChecker = (
   max?: number
 ) => {
   if (typeof input === typeof "") {
-    if (max && (input as string).length > max) return "Too long";
-    if (min && (input as string).length < min) return "Too short";
+    if (max && (input as string).length > max)
+      return `Input must be at most ${max} characters long`;
+    if (min && (input as string).length < min)
+      return `Input must be at least ${min} characters long`;
   } else {
     const strVal = `${input}`;
-    if (max && strVal.length > max) return "Too long";
-    if (min && strVal.length < min) return "Too short";
+    if (max && strVal.length > max)
+      return `Input must be at most ${max} characters long`;
+    if (min && strVal.length < min)
+      return `Input must be at least ${max} characters long`;
   }
-  return "";
-};
-
-export const illegalChecker = (input: string, illegals: string) => {
-  if (illegals.includes(input)) return "Illegal character";
   return "";
 };

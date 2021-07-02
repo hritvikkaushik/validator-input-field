@@ -5,6 +5,18 @@ import "./App.css";
 import ValidatorInputField from "./components/V2";
 
 function App() {
+  const validation = new Promise<string>((resolve, reject) => {
+    setTimeout(() => {
+      resolve("Failed server validation");
+      // resolve("");
+    }, 400);
+  });
+
+  const asyncValidator = async (text: string) => {
+    console.log(5, text);
+    return validation;
+  };
+
   return (
     <ChakraProvider>
       <div className="App" style={{ width: "400px" }}>
@@ -21,10 +33,16 @@ function App() {
           <Form>
             <ValidatorInputField
               name="formfield"
-              label="Enter text"
-              preventIllegalInputs={true}
-              illegalCharacters="1"
-              matchRegex={/a/}
+              // label="Enter text"
+              // preventIllegalInputs={true}
+              // illegalCharacters="1"
+              // matchRegex={/a/}
+              // maxLength={10}
+              // minLength={5}
+              asyncVal={asyncValidator}
+              // type="number"
+              inbuiltType="Aadhaar"
+
               // validationConfig={{
               //   // regex: /freecharge/,
               //   required: true,
