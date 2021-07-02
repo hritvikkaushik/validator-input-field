@@ -5,7 +5,7 @@ import { FormTextInput, MaskedInputProps } from "./FormTextInput";
 import { AadhaarValidator } from "./inbuiltValidations";
 import { lengthChecker, rangeChecker, regexChecker } from "./checkers";
 
-export type FormFieldTextInputProps<FormShape> = FormControlProps &
+export type ValidatorInputFieldProps<FormShape> = FormControlProps &
   InputProps & {
     helperText?: string;
     isNumberValidate?: boolean;
@@ -22,10 +22,12 @@ export type FormFieldTextInputProps<FormShape> = FormControlProps &
     preventIllegalInputs?: boolean;
     illegalCharacters?: string;
     matchRegex?: RegExp;
+    preventBeyondLength?: boolean;
+    length?: number;
   };
 
-export function FormFieldTextInput<FormShape>(
-  props: FormFieldTextInputProps<FormShape>
+export function ValidatorInputField<FormShape>(
+  props: ValidatorInputFieldProps<FormShape>
 ): ReactElement {
   const { name, isExternalError, externalError, inbuiltType } = props;
 
@@ -96,12 +98,33 @@ export function FormFieldTextInput<FormShape>(
     return e;
   };
 
+  const keyPressHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (props.preventBeyondLength) {
+      if (
+        (e.target as HTMLInputElement).value.length === props.maxLength ||
+        (e.target as HTMLInputElement).value.length === props.length
+      )
+        e.preventDefault();
+    }
+
+    if (props.preventIllegalInputs) {
+      if (props.type === "number" && e.key.match(/[a-zA-Z]/)) {
+        e.preventDefault();
+        // console.log(12);
+      }
+      // if (props.validationConfig.allowNum === false && e.key.match(/[0-9]/))
+      //   e.preventDefault();
+      if (props.illegalCharacters?.includes(e.key)) e.preventDefault();
+    }
+  };
+
   return (
     <Field name={name} validate={validate}>
       {({ field, form }: FieldProps<string, FormShape>) => {
         return (
           <FormTextInput
             onPaste={pasteHandler}
+            onKeyPress={keyPressHandler}
             {...field}
             {...props}
             touched={(getIn(form.touched, name) as boolean) || isExternalError}
@@ -116,4 +139,4 @@ export function FormFieldTextInput<FormShape>(
   );
 }
 
-export default FormFieldTextInput;
+export default ValidatorInputField;

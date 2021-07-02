@@ -34,14 +34,19 @@ function App() {
             <ValidatorInputField
               name="formfield"
               // label="Enter text"
-              // preventIllegalInputs={true}
-              // illegalCharacters="1"
+              preventIllegalInputs
+              preventBeyondLength
+              illegalCharacters="1"
               // matchRegex={/a/}
-              // maxLength={10}
+              maxLength={10}
               // minLength={5}
-              asyncVal={asyncValidator}
-              // type="number"
-              inbuiltType="Aadhaar"
+              // asyncVal={asyncValidator}
+              type="number"
+              // inbuiltType="Aadhaar"
+              isRequired
+              _invalid={{
+                borderBottomColor: "#800020",
+              }}
 
               // validationConfig={{
               //   // regex: /freecharge/,
